@@ -13,7 +13,7 @@
 
 LSM303 compass;
 ZumoBuzzer buzzer;
-bool note_playing;
+bool punch;
 
 int16_t previous;
 int16_t current;
@@ -26,7 +26,7 @@ void setup()
     Wire.begin();
     compass.init();
     compass.enableDefault();
-    note_playing = false;
+    punch = false;
     compass.readMag();
     previous = compass.m.x;
     current = previous;
@@ -37,16 +37,16 @@ void loop()
     compass.readMag();
     current = compass.m.x;
     Serial.println(current);
-    if (current - previous > 40 && !note_playing) {
+    if (current - previous > 40 && !punch) {
         buzzer.playNote(NOTE_E(7), 200, 100);
         digitalWrite(PUNCH_PIN, HIGH);
         delay(100);
-        note_playing = true;
+        punch = true;
     }
-    if (note_playing) {
+    if (punch) {
         digitalWrite(PUNCH_PIN, LOW);
         delay(100);
-        note_playing = false;
+        punch = false;
     }
     previous = current;
     delay(100);
